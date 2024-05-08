@@ -12,20 +12,33 @@ class TOONYPLATFORMER_API ACoin : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ACoin();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void Tick( float DeltaSeconds );
 private:
+
+	UPROPERTY()
+	FVector initialPosition = FVector::ZeroVector;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float moveSpeed{100.};
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float maxElevationDist{100.};
+
+	bool bMovingUp{true};
+	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USceneComponent> sceneComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true)) 
 	TObjectPtr<UStaticMeshComponent> staticMeshComponent;
 
+	void Rotate(float DeltaTime);
+	void MoveUpAndDown(float DeltaTime);
+	
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
