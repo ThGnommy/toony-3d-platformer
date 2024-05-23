@@ -40,7 +40,6 @@ void ACoin::Rotate(float DeltaTime)
 
 void ACoin::MoveUpAndDown(const float DeltaTime)
 {
-
 	auto newLocation{GetActorLocation()};
 	const double currentDist{FVector::Dist(initialPosition, newLocation)};
 	
