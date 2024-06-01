@@ -46,8 +46,12 @@ class AToonyPlatformerCharacter : public ACharacter
 
 public:
 	AToonyPlatformerCharacter();
-	
 
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurrentHealth() const;
+	
+	void Dead();
+	
 protected:
 
 	/** Called for movement input */
@@ -55,7 +59,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
 
 protected:
 	// APawn interface
@@ -64,10 +68,15 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+	int32 health{};
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-};
 
+private:
+	UFUNCTION()
+	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* _Instigator, AActor* DamageCauser);
+};

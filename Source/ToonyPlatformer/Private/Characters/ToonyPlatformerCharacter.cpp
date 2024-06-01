@@ -10,11 +10,17 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Controllers/ToonyPlatformerPlayerState.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
 // AToonyPlatformerCharacter
+
+namespace {
+	constexpr int32 maxHealth{3};
+}
 
 AToonyPlatformerCharacter::AToonyPlatformerCharacter()
 {
@@ -52,6 +58,19 @@ AToonyPlatformerCharacter::AToonyPlatformerCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	// Player properties
+	health = maxHealth;
+}
+
+int32 AToonyPlatformerCharacter::GetCurrentHealth() const
+{
+	return health;
+}
+
+void AToonyPlatformerCharacter::Dead()
+{
+	
 }
 
 void AToonyPlatformerCharacter::BeginPlay()
@@ -66,6 +85,21 @@ void AToonyPlatformerCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+
+	OnTakeAnyDamage.AddDynamic(this, &AToonyPlatformerCharacter::DamageTaken);
+}
+
+void AToonyPlatformerCharacter::DamageTaken(AActor*, float Damage, const UDamageType*, AController*, AActor*)
+{
+	health -= Damage;
+
+	if (auto* const playerState = Cast<AToonyPlatformerPlayerState>(UGameplayStatics::GetPlayerState(this, 0)); GetCurrentHealth() <= 0)
+	{
+		playerState->SetPlayerState(EPlayerState::Dead);
+		auto* const pawn{Cast<APawn>(UGameplayStatics::GetPlayerPawn(this, 0))};
+		check(pawn);
+		pawn->DisableInput(UGameplayStatics::GetPlayerController(this, 0));
 	}
 }
 
