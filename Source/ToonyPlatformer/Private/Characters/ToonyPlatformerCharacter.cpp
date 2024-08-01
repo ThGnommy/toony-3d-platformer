@@ -70,7 +70,8 @@ int32 AToonyPlatformerCharacter::GetCurrentHealth() const
 
 void AToonyPlatformerCharacter::Dead()
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("Player Died!"));
+	// ...
 }
 
 void AToonyPlatformerCharacter::BeginPlay()
@@ -90,17 +91,32 @@ void AToonyPlatformerCharacter::BeginPlay()
 	OnTakeAnyDamage.AddDynamic(this, &AToonyPlatformerCharacter::DamageTaken);
 }
 
-void AToonyPlatformerCharacter::DamageTaken(AActor*, float Damage, const UDamageType*, AController*, AActor*)
+void AToonyPlatformerCharacter::DamageTaken(AActor*, const float Damage, const UDamageType*, AController*, AActor*)
 {
 	health -= Damage;
 
-	if (auto* const playerState = Cast<AToonyPlatformerPlayerState>(UGameplayStatics::GetPlayerState(this, 0)); GetCurrentHealth() <= 0)
+	if (GetCurrentHealth() > 0)
+	{
+		constexpr double force{800.};
+		constexpr double forceZ{-400.};
+		const FVector faceDirection{GetActorRotation().Vector()};
+		const FVector pushDirection{FVector(faceDirection.X * force, faceDirection.Y * force, forceZ)};
+		LaunchCharacter(-pushDirection, true, true);
+	}
+	
+	if (auto* const playerState{GetPlayerState()}; GetCurrentHealth() <= 0 && playerState->GetCurrentPlayerState() != EPlayerState::Dead)
 	{
 		playerState->SetPlayerState(EPlayerState::Dead);
 		auto* const pawn{Cast<APawn>(UGameplayStatics::GetPlayerPawn(this, 0))};
 		check(pawn);
 		pawn->DisableInput(UGameplayStatics::GetPlayerController(this, 0));
+		Dead();
 	}
+}
+
+AToonyPlatformerPlayerState* AToonyPlatformerCharacter::GetPlayerState() const
+{
+	return Cast<AToonyPlatformerPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
 }
 
 //////////////////////////////////////////////////////////////////////////

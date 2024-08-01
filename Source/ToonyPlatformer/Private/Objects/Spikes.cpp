@@ -27,8 +27,7 @@ void ASpikes::BeginPlay()
 	staticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ASpikes::OnBeginOverlap);
 }
 
-void ASpikes::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-                             int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ASpikes::OnBeginOverlap(UPrimitiveComponent*, AActor* OtherActor, UPrimitiveComponent*, int32, bool, const FHitResult&)
 {
 	const TWeakObjectPtr<AToonyPlatformerCharacter> player = Cast<AToonyPlatformerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 

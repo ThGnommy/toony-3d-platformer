@@ -22,10 +22,10 @@ private:
 	int32 damage{};
 	
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USceneComponent> sceneComponent;
+	TObjectPtr<USceneComponent> sceneComponent{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true)) 
-	TObjectPtr<UStaticMeshComponent> staticMeshComponent;
+	TObjectPtr<UStaticMeshComponent> staticMeshComponent{};
 	
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

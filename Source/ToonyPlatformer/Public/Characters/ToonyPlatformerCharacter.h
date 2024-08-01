@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Controllers/ToonyPlatformerPlayerState.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "ToonyPlatformerCharacter.generated.h"
@@ -79,4 +80,5 @@ public:
 private:
 	UFUNCTION()
 	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* _Instigator, AActor* DamageCauser);
+	AToonyPlatformerPlayerState* GetPlayerState() const;
 };
